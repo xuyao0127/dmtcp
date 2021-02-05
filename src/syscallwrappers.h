@@ -161,7 +161,6 @@ LIB_PRIVATE extern __thread int thread_performing_dlopen_dlsym;
                                       \
   MACRO(signal)                       \
   MACRO(sigaction)                    \
-  MACRO(sigvec)                       \
                                       \
   MACRO(sigset)                       \
   MACRO(sigblock)                     \
