@@ -1,0 +1,5 @@
+set breakpoint pending on
+b checkpointhread
+r
+p curThread = motherofall
+c
