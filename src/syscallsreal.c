@@ -44,7 +44,12 @@
 #include <sys/syscall.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
+#include <signal.h>
+#include <syslog.h>
+#include <mqueue.h>
 #include "constants.h"
 #include "syscallwrappers.h"
 #include "trampolines.h"
@@ -52,6 +57,8 @@
 typedef int (*funcptr_t) ();
 typedef pid_t (*funcptr_pid_t) ();
 typedef funcptr_t (*signal_funcptr_t) ();
+
+#define STATIC
 
 // gettid / tkill / tgkill are not defined in libc.
 LIB_PRIVATE pid_t
@@ -219,13 +226,29 @@ LIB_PRIVATE void dmtcp_unsetThreadPerformingDlopenDlsym();
 static void *_real_func_addr[numLibcWrappers];
 static int dmtcp_wrappers_initialized = 0;
 
+#ifdef STATIC
+/* symbols can't be resolved by compiler */
+extern int __clone(int (*fn)(void *), void *stack, int flags, void *arg, 
+                 pid_t *parent_tid, void *tls, pid_t *child_tid);
+extern int __sigpause (int __sig_or_mask, int __is_sig);
+#define GET_FUNC_ADDR(name) \
+  _real_func_addr[ENUM(name)] = name;
+#else
 #define GET_FUNC_ADDR(name) \
   _real_func_addr[ENUM(name)] = dmtcp_dlsym(RTLD_NEXT, #name);
+#endif
 
 static void
 initialize_libc_wrappers()
 {
   FOREACH_DMTCP_WRAPPER(GET_FUNC_ADDR);
+
+#ifdef STATIC
+  /* Because in static mode, we don't use dlsym, so there is only one 
+   * pthread_start we need to wrap up.
+   */
+  _real_func_addr[ENUM(pthread_create)] = pthread_create;
+#else
 #ifdef __i386__
 
   /* On i386 systems, there are two pthread_create symbols. We want the one
@@ -242,6 +265,7 @@ initialize_libc_wrappers()
   if (addr != NULL) {
     _real_func_addr[ENUM(pthread_create)] = addr;
   }
+#endif
 }
 
 void
@@ -336,6 +360,7 @@ _dmtcp_unsetenv(const char *name)
   REAL_FUNC_PASSTHROUGH(unsetenv) (name);
 }
 
+#ifndef STATIC
 LIB_PRIVATE
 void *
 _real_dlopen(const char *filename, int flag)
@@ -349,6 +374,7 @@ _real_dlclose(void *handle)
 {
   REAL_FUNC_PASSTHROUGH_TYPED(int, dlclose) (handle);
 }
+#endif
 
 LIB_PRIVATE
 int
@@ -638,6 +664,7 @@ _real_sigaction(int signum,
   REAL_FUNC_PASSTHROUGH(sigaction) (signum, act, oldact);
 }
 
+#ifndef STATIC
 #if !__GLIBC_PREREQ(2, 21)
 LIB_PRIVATE
 int
@@ -646,6 +673,7 @@ _real_sigvec(int signum, const struct sigvec *vec, struct sigvec *ovec)
   REAL_FUNC_PASSTHROUGH(sigvec) (signum, vec, ovec);
 }
 #endif /* if !__GLIBC_PREREQ(2, 21) */
+#endif
 
 // set the mask
 LIB_PRIVATE
@@ -1078,6 +1106,7 @@ _real_msgctl(int msqid, int cmd, struct msqid_ds *buf)
   REAL_FUNC_PASSTHROUGH(msgctl) (msqid, cmd | IPC64_FLAG, buf);
 }
 
+#ifndef STATIC
 LIB_PRIVATE
 mqd_t
 _real_mq_open(const char *name, int oflag, mode_t mode, struct mq_attr *attr)
@@ -1123,3 +1152,5 @@ _real_mq_timedsend(mqd_t mqdes,
   REAL_FUNC_PASSTHROUGH(mq_timedsend) (mqdes, msg_ptr, msg_len, msg_prio,
                                        abs_timeout);
 }
+
+#endif

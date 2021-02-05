@@ -8,6 +8,8 @@
 #include "plugininfo.h"
 #include "util.h"
 
+#define STATIC
+
 static dmtcp::PluginManager *pluginManager = NULL;
 JTIMER_NOPRINT(ckptWriteTime);
 
@@ -57,6 +59,7 @@ extern "C" void
 dmtcp_initialize_plugin()
 {
   // Now register the "in-built" plugins.
+#ifndef STATIC
   dmtcp_register_plugin(dmtcp_Syslog_PluginDescr());
   dmtcp_register_plugin(dmtcp_Rlimit_Float_PluginDescr());
   dmtcp_register_plugin(dmtcp_Alarm_PluginDescr());
@@ -64,6 +67,7 @@ dmtcp_initialize_plugin()
   dmtcp_register_plugin(CoordinatorAPI::pluginDescr());
   dmtcp_register_plugin(dmtcp_ProcessInfo_PluginDescr());
   dmtcp_register_plugin(UniquePid::pluginDescr());
+#endif
 
   void (*fn)() = NEXT_FNC(dmtcp_initialize_plugin);
   if (fn != NULL) {

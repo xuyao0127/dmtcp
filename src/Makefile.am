@@ -17,7 +17,7 @@ jalibdir=$(top_srcdir)/jalib
 dmtcpincludedir=$(top_srcdir)/include
 dmtcplibdir = $(pkglibdir)
 
-SUBDIRS = mtcp plugin
+SUBDIRS = mtcp # plugin
 
 PICFLAGS=-fPIC
 AM_CFLAGS = $(PICFLAGS)
@@ -53,7 +53,8 @@ bin_PROGRAMS = $(d_bindir)/dmtcp_command 			\
 	       $(d_bindir)/dmtcp_get_libc_offset		\
 	       $(d_bindir)/dmtcp_restart
 
-dmtcplib_PROGRAMS = $(d_libdir)/libdmtcp.so
+# dmtcplib_PROGRAMS = $(d_libdir)/libdmtcp.so
+dmtcplib_LIBRARIES = $(d_libdir)/libdmtcp.a
 
 include_HEADERS = $(srcdir)/../include/dmtcp.h 			\
 		  $(srcdir)/../include/dmtcp/version.h
@@ -142,36 +143,52 @@ libsyscallsreal_a_SOURCES = syscallsreal.c 			\
 libnohijack_a_SOURCES = dmtcpnohijackstubs.cpp			\
 			nosyscallsreal.c
 
-__d_libdir__libdmtcp_so_SOURCES = alarm.cpp			\
+__d_libdir__libdmtcp_a_SOURCES = alarm.cpp			\
 				  ckptserializer.cpp 		\
 				  dmtcpplugin.cpp 		\
 				  dmtcpworker.cpp 		\
-				  execwrappers.cpp 		\
 				  glibcsystem.cpp 		\
-				  miscwrappers.cpp 		\
 				  plugininfo.cpp 		\
 				  pluginmanager.cpp		\
 				  popen.cpp 			\
 				  rlimitfloatenv.cpp 		\
-				  signalwrappers.cpp 		\
+				  writeckpt.cpp 		\
 				  siginfo.cpp 			\
-				  syslogwrappers.cpp 		\
 				  terminal.cpp 			\
+				  static-wrappers.cpp 		\
 				  threadlist.cpp 		\
-				  threadsync.cpp 		\
-				  threadwrappers.cpp 		\
-				  wrappers.cpp 			\
-				  writeckpt.cpp
+				  threadsync.cpp
 
-__d_libdir__libdmtcp_so_LDFLAGS = -shared -Xlinker -znow
+__d_libdir__libdmtcp_a_LDFLAG = -all-static
 
 # Note that an ELF object uses libsyscallsreal.a or libnohijack.a
 #  but not both.  libnohijack.a has stub definitions for same symbols.
-__d_libdir__libdmtcp_so_LDADD = libdmtcpinternal.a 		\
-				 libjalib.a 			\
-				 libsyscallsreal.a 		\
-				 mtcp/libmtcp.a			\
-				 -ldl -lpthread -lrt
+__d_libdir__libdmtcp_a_LIBADD = coordinatorapi.o 		\
+			     dmtcpmessagetypes.o		\
+			     dmtcp_dlsym.o 			\
+			     jalibinterface.o			\
+			     mutex.o 				\
+			     processinfo.o 			\
+			     procselfmaps.o			\
+			     rwlock.o 			\
+			     shareddata.o 			\
+			     tokenize.o			\
+			     uniquepid.o			\
+			     util_exec.o			\
+			     util_init.o 			\
+			     util_misc.o 			\
+			     workerstate.o \
+			     jalib.o			\
+			     jalloc.o			\
+			     jassert.o 			\
+			     jbuffer.o			\
+			     jfilesystem.o 		\
+			     jserialize.o			\
+			     jsocket.o 			\
+			     jtimer.o \
+			     syscallsreal.o 			\
+			     trampolines.o \
+			     mtcp/restore_libc.o
 
 
 __d_bindir__dmtcp_nocheckpoint_SOURCES = dmtcp_nocheckpoint.c

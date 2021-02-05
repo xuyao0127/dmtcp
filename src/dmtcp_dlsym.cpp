@@ -71,6 +71,8 @@
 #include "jassert.h"
 #include "config.h"
 
+#define STATIC 1
+
 // ***** NOTE:  link.h invokes elf.h, which:
 // *****        expands ElfW(Word)  to  Elf64_Word; and then defines:
 // *****        typedef uint32_t Elf63_Word;
@@ -432,6 +434,19 @@ dlsym_default_internal_library_handler(void *handle,
 // with the given name of a default version found by the search order of the
 // given
 // handle which is either RTLD_DEFAULT or RTLD_NEXT.
+#ifdef STATIC
+void *
+dlsym_default_internal_flag_handler(void *handle,
+                                    const char *libname,
+                                    const char *symbol,
+                                    const char *version,
+                                    void *addr,
+                                    dt_tag *tags_p,
+                                    Elf32_Word *default_symbol_index_p)
+{
+  return NULL;
+}
+#else
 void *
 dlsym_default_internal_flag_handler(void *handle,
                                     const char *libname,
@@ -497,6 +512,7 @@ dlsym_default_internal_flag_handler(void *handle,
   }
   return NULL;
 }
+#endif
 
 // Produces an error message and hard fails if no default_symbol was found.
 static void
@@ -541,7 +557,12 @@ print_debug_messages(dt_tag tags,
  * to follow the unusual rule of ignoring the hidden bit, and choosing a
  * somewhat arbtrary version that is often the oldest version.
  */
-
+#ifdef STATIC
+EXTERNC void *
+dmtcp_dlsym(void *handle, const char *symbol) {
+  return NULL;
+}
+#else
 EXTERNC void *
 dmtcp_dlsym(void *handle, const char *symbol)
 {
@@ -578,7 +599,15 @@ dmtcp_dlsym(void *handle, const char *symbol)
   dmtcp_enable_ckpt();
   return result;
 }
+#endif
 
+#ifdef STATIC
+EXTERNC void *
+dmtcp_dlvsym(void *handle, char *symbol, const char *version)
+{
+  return NULL;
+}
+#else
 EXTERNC void *
 dmtcp_dlvsym(void *handle, char *symbol, const char *version)
 {
@@ -608,7 +637,15 @@ dmtcp_dlvsym(void *handle, char *symbol, const char *version)
   dmtcp_enable_ckpt();
   return result;
 }
+#endif
 
+#ifdef STATIC
+EXTERNC void *
+dmtcp_dlsym_lib(const char *libname, const char *symbol)
+{
+  return NULL;
+}
+#else
 EXTERNC void *
 dmtcp_dlsym_lib(const char *libname, const char *symbol)
 {
@@ -627,11 +664,19 @@ dmtcp_dlsym_lib(const char *libname, const char *symbol)
   dmtcp_enable_ckpt();
   return result;
 }
+#endif
 
 /*
  * Returns the offset of the given function within the given shared library
  * or LIB_FNC_OFFSET_FAILED if the function does not exist in the library
  */
+#ifdef STATIC
+EXTERNC uint64_t
+dmtcp_dlsym_lib_fnc_offset(const char *libname, const char *symbol)
+{
+  return 0;
+}
+#else
 EXTERNC uint64_t
 dmtcp_dlsym_lib_fnc_offset(const char *libname, const char *symbol)
 {
@@ -650,3 +695,4 @@ dmtcp_dlsym_lib_fnc_offset(const char *libname, const char *symbol)
   }
   return ret;
 }
+#endif

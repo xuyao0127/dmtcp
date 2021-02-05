@@ -109,9 +109,10 @@ extern int dmtcp_wrappers_initializing;
 
 LIB_PRIVATE extern __thread int thread_performing_dlopen_dlsym;
 
+#ifdef STATIC
+/* sigvec() is no longer supported starting with glibc 2.21 */
+#endif
 #define FOREACH_DMTCP_WRAPPER(MACRO)  \
-  MACRO(dlopen)                       \
-  MACRO(dlclose)                      \
   MACRO(getpid)                       \
   MACRO(getppid)                      \
   MACRO(kill)                         \
@@ -232,12 +233,6 @@ LIB_PRIVATE extern __thread int thread_performing_dlopen_dlsym;
   MACRO(msgctl)                       \
   MACRO(msgsnd)                       \
   MACRO(msgrcv)                       \
-                                      \
-  MACRO(mq_open)                      \
-  MACRO(mq_close)                     \
-  MACRO(mq_timedsend)                 \
-  MACRO(mq_timedreceive)              \
-  MACRO(mq_notify)                    \
                                       \
   MACRO(pthread_create)               \
   MACRO(pthread_exit)                 \

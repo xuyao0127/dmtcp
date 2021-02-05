@@ -44,6 +44,8 @@
 #undef dmtcp_set_ckpt_dir
 #undef dmtcp_get_ckpt_dir
 
+#define STATIC
+
 using namespace dmtcp;
 
 // I wish we could use pthreads for the trickery in this file, but much of our
@@ -251,6 +253,12 @@ dmtcp_get_bin_dir(char dmtcp_bin_dir[]) {
 /* See include/dmtcp.h for examples of using this function.
  */
 #undef dmtcp_get_libc_addr
+#ifdef STATIC
+EXTERNC void *
+dmtcp_get_libc_addr(const char*libc_fnc) {
+  return NULL;
+}
+#else
 EXTERNC void *
 dmtcp_get_libc_addr(const char*libc_fnc) {
   char dmtcp_bin_dir[10000];
@@ -287,6 +295,7 @@ dmtcp_get_libc_addr(const char*libc_fnc) {
     exit(0); // to satisfy the compiler
   }
 }
+#endif
 
 EXTERNC int
 dmtcp_should_ckpt_open_files(void)

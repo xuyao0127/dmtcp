@@ -37,6 +37,8 @@
 #include "threadsync.h"
 #include "util.h"
 
+#define STATIC
+
 using namespace dmtcp;
 
 LIB_PRIVATE void dmtcp_prepare_atfork(void);
@@ -248,7 +250,9 @@ dmtcp_initialize_entry_point()
   dmtcp_initialize();
 
   initializeJalib();
+#ifdef STAITC
   dmtcp_prepare_atfork();
+#endif
 
   WorkerState::setCurrentState(WorkerState::RUNNING);
 
