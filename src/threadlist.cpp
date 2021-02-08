@@ -349,6 +349,14 @@ checkpointhread(void *dummy)
    * will forget any modifications to our local variables since restart.
    */
 
+  /* curThread is thread-local variable.  So, this new thread initializes
+   * it to NULL.  Somehow, the dynamically linked version of DMTCP
+   * causes curThread in the checkpointhread to inherit information
+   * from the original thread.  Why?  But when statically linked,
+   * curThread retains its NULL value, and so we have to initialize it here.
+   */
+  curThread = ThreadList::getNewThread();
+  ThreadList::updateTid(curThread);
   ckptThread = curThread;
   ckptThread->state = ST_CKPNTHREAD;
 
