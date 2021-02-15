@@ -156,6 +156,7 @@ __d_libdir__libdmtcp_a_SOURCES = alarm.cpp			\
 				  siginfo.cpp 			\
 				  terminal.cpp 			\
 				  static-wrappers.cpp 		\
+				  threadwrappers.cpp    \
 				  threadlist.cpp 		\
 				  threadsync.cpp
 

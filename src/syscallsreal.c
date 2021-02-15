@@ -228,9 +228,13 @@ static int dmtcp_wrappers_initialized = 0;
 
 #ifdef STATIC
 /* symbols can't be resolved by compiler */
+extern int __real___clone(int (*fn)(void *), void *stack, int flags, void *arg, 
+                 pid_t *parent_tid, void *tls, pid_t *child_tid);
 extern int __clone(int (*fn)(void *), void *stack, int flags, void *arg, 
                  pid_t *parent_tid, void *tls, pid_t *child_tid);
 extern int __sigpause (int __sig_or_mask, int __is_sig);
+extern int __real_pthread_create(pthread_t *thread, const pthread_attr_t *attr,
+                                  void *(*start_routine) (void *), void *arg);
 #define GET_FUNC_ADDR(name) \
   _real_func_addr[ENUM(name)] = name;
 #else
@@ -242,12 +246,13 @@ static void
 initialize_libc_wrappers()
 {
   FOREACH_DMTCP_WRAPPER(GET_FUNC_ADDR);
+  _real_func_addr[ENUM(__clone)] = __real___clone;
 
 #ifdef STATIC
   /* Because in static mode, we don't use dlsym, so there is only one 
    * pthread_start we need to wrap up.
    */
-  _real_func_addr[ENUM(pthread_create)] = pthread_create;
+  _real_func_addr[ENUM(pthread_create)] = __real_pthread_create;
 #else
 #ifdef __i386__
 

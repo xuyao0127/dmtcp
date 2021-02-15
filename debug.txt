@@ -1,0 +1,22 @@
+#0  0x00007ffff6454870 in clone () from /lib64/libc.so.6
+#1  0x00007ffff6d7a7cb in _real_clone (function=0x7ffff6d76b76 <clone_start(void*)>, child_stack=0x7ffff2e67e80, flags=4001536,
+    arg=0x7ffff7ff0e48, parent_tidptr=0x7ffff2e689d0, newtls=0x7ffff2e68700, child_tidptr=0x7ffff2e689d0) at pid/pid_syscallsreal.c:371
+#2  0x00007ffff6d76d5a in __clone (fn=0x7ffff6fe645d <clone_start(void*)>, child_stack=0x7ffff2e67e80, flags=4001536, arg=0x7ffff7fc7008,
+        parent_tidptr=0x7ffff2e689d0, newtls=0x7ffff2e68700, child_tidptr=0x7ffff2e689d0) at pid/pid_miscwrappers.cpp:227
+#3  0x00007ffff7020a17 in _real_clone (function=0x7ffff6fe645d <clone_start(void*)>, child_stack=0x7ffff2e67e80, flags=4001536,
+            arg=0x7ffff7fc7008, parent_tidptr=0x7ffff2e689d0, newtls=0x7ffff2e68700, child_tidptr=0x7ffff2e689d0) at syscallsreal.c:930
+#4  0x00007ffff6fe6566 in __clone (fn=0x7ffff5f3dde0 <start_thread>, child_stack=0x7ffff2e67e80, flags=4001536, arg=0x7ffff2e68700,
+                ptid=0x7ffff2e689d0, tls=0x7ffff2e68700, ctid=0x7ffff2e689d0) at threadwrappers.cpp:117
+#5  0x00007ffff5f3d05a in do_clone.constprop.4 () from /lib64/libpthread.so.0
+#6  0x00007ffff5f3e6bd in pthread_create@@GLIBC_2.2.5 () from /lib64/libpthread.so.0
+#7  0x00007ffff7020bd7 in _real_pthread_create (thread=0x7fffffffd6d0, attr=0x0, start_routine=0x7ffff6fe6590 <pthread_start(void*)>,
+                    arg=0x7ffff7ff0e88) at syscallsreal.c:958
+#8  0x00007ffff6fe68d0 in pthread_create (thread=0x7fffffffd6d0, attr=0x0, start_routine=0x7ffff6fe172f <checkpointhread(void*)>, arg=0x0)
+                        at threadwrappers.cpp:226
+#9  0x00007ffff6fe12e8 in dmtcp::ThreadList::init () at threadlist.cpp:202
+#10 0x00007ffff6fcf224 in dmtcp_initialize_entry_point () at dmtcpworker.cpp:295
+#11 0x00007ffff7dea9b3 in _dl_init_internal () from /lib64/ld-linux-x86-64.so.2
+#12 0x00007ffff7ddc17a in _dl_start_user () from /lib64/ld-linux-x86-64.so.2
+#13 0x0000000000000001 in ?? ()
+#14 0x00007fffffffe066 in ?? ()
+#15 0x0000000000000000 in ?? ()

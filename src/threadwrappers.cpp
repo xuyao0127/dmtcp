@@ -33,6 +33,8 @@
 #include "uniquepid.h"
 #include "util.h"
 
+#define STATIC
+
 using namespace dmtcp;
 
 struct ThreadArg {
@@ -94,6 +96,15 @@ clone_start(void *arg)
 
 // need to forward user clone
 extern "C" int
+#ifdef STATIC
+__wrap___clone(int (*fn)(void *arg),
+        void *child_stack,
+        int flags,
+        void *arg,
+        int *ptid,
+        struct user_desc *tls,
+        int *ctid)
+#else
 __clone(int (*fn)(void *arg),
         void *child_stack,
         int flags,
@@ -101,6 +112,7 @@ __clone(int (*fn)(void *arg),
         int *ptid,
         struct user_desc *tls,
         int *ctid)
+#endif
 {
   WRAPPER_EXECUTION_DISABLE_CKPT();
   ThreadSync::incrementUninitializedThreadCount();
@@ -180,10 +192,17 @@ pthread_start(void *arg)
 }
 
 extern "C" int
+#ifdef STATIC
+__wrap_pthread_create(pthread_t *thread,
+               const pthread_attr_t *attr,
+               void *(*start_routine)(void *),
+               void *arg)
+#else
 pthread_create(pthread_t *thread,
                const pthread_attr_t *attr,
                void *(*start_routine)(void *),
                void *arg)
+#endif
 {
   int retval;
 
@@ -237,7 +256,11 @@ pthread_create(pthread_t *thread,
 }
 
 extern "C" void
+#ifdef STATIC
+__wrap_pthread_exit(void *retval)
+#else
 pthread_exit(void *retval)
+#endif
 {
   WRAPPER_EXECUTION_DISABLE_CKPT();
   ThreadList::threadExit();
@@ -272,7 +295,11 @@ pthread_exit(void *retval)
  */
 static struct timespec ts_100ms = { 0, 100 * 1000 * 1000 };
 extern "C" int
+#ifdef STATIC
+__wrap_pthread_join(pthread_t thread, void **retval)
+#else
 pthread_join(pthread_t thread, void **retval)
+#endif
 {
   int ret;
   struct timespec ts;
@@ -299,7 +326,11 @@ pthread_join(pthread_t thread, void **retval)
 }
 
 extern "C" int
+#ifdef STATIC
+__wrap_pthread_tryjoin_np(pthread_t thread, void **retval)
+#else
 pthread_tryjoin_np(pthread_t thread, void **retval)
+#endif
 {
   int ret;
 
@@ -316,9 +347,15 @@ pthread_tryjoin_np(pthread_t thread, void **retval)
 }
 
 extern "C" int
+#ifdef STATIC
+__wrap_pthread_timedjoin_np(pthread_t thread,
+                     void **retval,
+                     const struct timespec *abstime)
+#else
 pthread_timedjoin_np(pthread_t thread,
                      void **retval,
                      const struct timespec *abstime)
+#endif
 {
   int ret;
   struct timespec ts;

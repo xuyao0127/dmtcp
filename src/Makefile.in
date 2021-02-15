@@ -159,7 +159,8 @@ am___d_libdir__libdmtcp_a_OBJECTS = alarm.$(OBJEXT) \
 	plugininfo.$(OBJEXT) pluginmanager.$(OBJEXT) popen.$(OBJEXT) \
 	rlimitfloatenv.$(OBJEXT) writeckpt.$(OBJEXT) siginfo.$(OBJEXT) \
 	terminal.$(OBJEXT) static-wrappers.$(OBJEXT) \
-	threadlist.$(OBJEXT) threadsync.$(OBJEXT)
+	threadwrappers.$(OBJEXT) threadlist.$(OBJEXT) \
+	threadsync.$(OBJEXT)
 __d_libdir__libdmtcp_a_OBJECTS = $(am___d_libdir__libdmtcp_a_OBJECTS)
 am__dirstamp = $(am__leading_dot)dirstamp
 libdmtcpinternal_a_AR = $(AR) $(ARFLAGS)
@@ -610,6 +611,7 @@ __d_libdir__libdmtcp_a_SOURCES = alarm.cpp			\
 				  siginfo.cpp 			\
 				  terminal.cpp 			\
 				  static-wrappers.cpp 		\
+				  threadwrappers.cpp    \
 				  threadlist.cpp 		\
 				  threadsync.cpp
 
@@ -888,6 +890,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/terminal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/threadlist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/threadsync.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/threadwrappers.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tokenize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trampolines.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uniquepid.Po@am__quote@
