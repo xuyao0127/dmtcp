@@ -6,15 +6,22 @@
 
 int main(int argc, char **argv) {
   int fd;
-  printf("calling open\n");
+  printf("1 calling open\n");
   fd = open("foo.txt", O_WRONLY|O_CREAT, 0664);
   char s[] = "Hello, World\n";
-  int i = 1;
-  while (i) {
-    sleep(1);
-    printf("waiting\n");
-  }
   write(fd, s, sizeof(s));
+  close(fd);
+
+  // sleep for checkpointing
+  printf("before checkpoint\n");
+  sleep(2);
+  printf("after checkpoint\n");
+
+  printf("2 calling open\n");
+  fd = open("foo.txt", O_RDONLY);
+  char buf[20];
+  read(fd, buf, 20);
+  printf("%s", buf);
   close(fd);
   return 0;
 }
