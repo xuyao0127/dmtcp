@@ -61,12 +61,12 @@ dmtcp_initialize_plugin()
   // Now register the "in-built" plugins.
 #ifndef STATIC
   dmtcp_register_plugin(dmtcp_Syslog_PluginDescr());
+#endif
   dmtcp_register_plugin(dmtcp_Rlimit_Float_PluginDescr());
   dmtcp_register_plugin(dmtcp_Alarm_PluginDescr());
   dmtcp_register_plugin(dmtcp_Terminal_PluginDescr());
   dmtcp_register_plugin(dmtcp_ProcessInfo_PluginDescr());
   dmtcp_register_plugin(UniquePid::pluginDescr());
-#endif
   dmtcp_register_plugin(CoordinatorAPI::pluginDescr());
 
   void (*fn)() = NEXT_FNC(dmtcp_initialize_plugin);
