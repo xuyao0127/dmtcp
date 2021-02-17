@@ -235,6 +235,7 @@ extern int __clone(int (*fn)(void *), void *stack, int flags, void *arg,
 extern int __sigpause (int __sig_or_mask, int __is_sig);
 extern int __real_pthread_create(pthread_t *thread, const pthread_attr_t *attr,
                                   void *(*start_routine) (void *), void *arg);
+extern int __real_open(const char *pathname, int flags, mode_t mode);
 #define GET_FUNC_ADDR(name) \
   _real_func_addr[ENUM(name)] = name;
 #else
@@ -247,6 +248,7 @@ initialize_libc_wrappers()
 {
   FOREACH_DMTCP_WRAPPER(GET_FUNC_ADDR);
   _real_func_addr[ENUM(__clone)] = __real___clone;
+  _real_func_addr[ENUM(open)] = __real_open;
 
 #ifdef STATIC
   /* Because in static mode, we don't use dlsym, so there is only one 

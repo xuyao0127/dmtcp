@@ -56,6 +56,8 @@
 #endif // if defined(__aarch64__)
 #define _real_waitpid(a, b, c) _real_syscall(SYS_wait4, a, b, c, NULL)
 
+#define STATIC
+
 using namespace dmtcp;
 
 #define FORKED_CKPT_FAILED 0
@@ -66,7 +68,11 @@ static int forked_ckpt_status = -1;
 static pid_t ckpt_extcomp_child_pid = -1;
 static struct sigaction saved_sigchld_action;
 static int open_ckpt_to_write(int fd, int pipe_fds[2], char **extcomp_args);
+#ifdef STATIC
+extern void mtcp_writememoryareas(int fd);
+#else
 void mtcp_writememoryareas(int fd) __attribute__((weak));
+#endif
 
 /* We handle SIGCHLD while checkpointing. */
 static void

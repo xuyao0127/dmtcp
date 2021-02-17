@@ -46,9 +46,14 @@
 
 #define DELETED_FILE_SUFFIX  " (deleted)"
 
+#define STATIC
 
+#ifdef STATIC
+#include "syscallwrappers.h"
+#else
 #define _real_open           NEXT_FNC(open)
 #define _real_close          NEXT_FNC(close)
+#endif
 
 using namespace dmtcp;
 
