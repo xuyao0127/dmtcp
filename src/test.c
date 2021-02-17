@@ -9,6 +9,11 @@ int main(int argc, char **argv) {
   printf("calling open\n");
   fd = open("foo.txt", O_WRONLY|O_CREAT, 0664);
   char s[] = "Hello, World\n";
+  int i = 1;
+  while (i) {
+    sleep(1);
+    printf("waiting\n");
+  }
   write(fd, s, sizeof(s));
   close(fd);
   return 0;

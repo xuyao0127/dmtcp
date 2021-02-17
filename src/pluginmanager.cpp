@@ -64,10 +64,10 @@ dmtcp_initialize_plugin()
   dmtcp_register_plugin(dmtcp_Rlimit_Float_PluginDescr());
   dmtcp_register_plugin(dmtcp_Alarm_PluginDescr());
   dmtcp_register_plugin(dmtcp_Terminal_PluginDescr());
-  dmtcp_register_plugin(CoordinatorAPI::pluginDescr());
   dmtcp_register_plugin(dmtcp_ProcessInfo_PluginDescr());
   dmtcp_register_plugin(UniquePid::pluginDescr());
 #endif
+  dmtcp_register_plugin(CoordinatorAPI::pluginDescr());
 
   void (*fn)() = NEXT_FNC(dmtcp_initialize_plugin);
   if (fn != NULL) {
