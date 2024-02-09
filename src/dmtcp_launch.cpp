@@ -183,6 +183,7 @@ static bool enableIPCPlugin = true;
 static bool enableSvipcPlugin = true;
 static bool enablePathVirtPlugin = false;
 static bool enableTimerPlugin = true;
+static bool enableMpiPlugin = false;
 
 #ifdef UNIQUE_CHECKPOINT_FILENAMES
 static bool enableUniqueCkptPlugin = true;
@@ -358,6 +359,7 @@ processArgs(int *orig_argc, const char ***orig_argv)
       setenv(ENV_VAR_QUIET, getenv(ENV_VAR_QUIET), 1);
       shift;
     } else if (s == "--mpi") {
+      enableMpiPlugin = true;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 11)
       personality(ADDR_NO_RANDOMIZE);
 #endif
@@ -863,18 +865,29 @@ setLDPreloadLibs(bool is32bitElf)
 #endif // if defined(__x86_64__) || defined(__aarch64__)
   }
 
-  setenv("LD_PRELOAD", preloadLibs.c_str(), 1);
+  if (enableMpiPlugin) {
+    printf("UH_PRELOAD: %s \n", preloadLibs.c_str());
+    setenv("UH_PRELOAD", preloadLibs.c_str(), 1);
+  } else {
+    setenv("LD_PRELOAD", preloadLibs.c_str(), 1);
+  }
+
 #if defined(__x86_64__) || defined(__aarch64__)
   if (is32bitElf) {
     string libdmtcp = Util::getPath("libdmtcp.so", true);
     JWARNING(libdmtcp != "libdmtcp.so") (libdmtcp)
-    .Text("You appear to be checkpointing a 32-bit target under 64-bit Linux.\n"
+      .Text("You appear to be checkpointing a 32-bit target under 64-bit Linux.\n"
           "DMTCP was unable to find the 32-bit installation.\n"
           "See DMTCP FAQ or try:\n"
           "  ./configure --enable-m32 && make clean && make -j && "
           "make install\n"
           "  ./configure && make clean && make -j && make install\n");
-    setenv("LD_PRELOAD", preloadLibs32.c_str(), 1);
+    if (enableMpiPlugin) {
+      printf("UH_PRELOAD: %s \n", preloadLibs.c_str());
+      setenv("UH_PRELOAD", preloadLibs.c_str(), 1);
+    } else {
+      setenv("LD_PRELOAD", preloadLibs.c_str(), 1);
+    }
   }
 #endif // if defined(__x86_64__) || defined(__aarch64__)
   JTRACE("getting value of LD_PRELOAD")
