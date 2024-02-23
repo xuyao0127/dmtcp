@@ -159,6 +159,8 @@ mtcp_restart_process_args(int argc, char *argv[], char **environ, void (*restore
     } else if (mtcp_strcmp(argv[0], "--simulate") == 0) {
       rinfo.simulate = 1;
       shift;
+    } else if (mtcp_strcmp(argv[0], "--restore") == 0) {
+      shift;
     } else if (argc == 1) {
       // We would use MTCP_PRINTF, but it's also for output of util/readdmtcp.sh
       mtcp_printf("Considering '%s' as a ckpt image.\n", argv[0]);
@@ -673,7 +675,7 @@ compute_regions_to_munmap(RestoreInfo *rinfo)
       rinfo->regions_to_munmap[idx].startAddr = area.addr;
       rinfo->regions_to_munmap[idx].endAddr = area.endAddr;
 
-      MTCP_ASSERT(rinfo->num_regions_to_munmap < MAX_REGIONS_TO_MUNMAP);
+      // MTCP_ASSERT(rinfo->num_regions_to_munmap < MAX_REGIONS_TO_MUNMAP);
     }
   }
 

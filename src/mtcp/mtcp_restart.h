@@ -79,7 +79,7 @@
 
 typedef void (*fnptr_t)();
 
-#define MAX_REGIONS_TO_MUNMAP 16
+#define MAX_REGIONS_TO_MUNMAP 1000
 
 typedef struct MemRegion_t {
   VA startAddr;
