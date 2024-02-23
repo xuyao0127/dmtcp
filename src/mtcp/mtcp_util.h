@@ -158,6 +158,9 @@ size_t len;
 # endif /* DEMONSTRATE_BUG */
 #endif // if 0
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 void mtcp_printf(char const *format, ...);
 ssize_t mtcp_read_all(int fd, void *buf, size_t count);
 int mtcp_readfile(int fd, void *buf, size_t size);
@@ -188,4 +191,8 @@ void *mtcp_memcpy(void *dstpp, const void *srcpp, size_t len);
 char *mtcp_getenv(const char *name, char **environ);
 void* mmap_fixed_noreplace(void *addr, size_t len, int prot, int flags,
                            int fd, off_t offset);
+int mtcp_setauxval(char **evp, unsigned long int type, unsigned long int val);
+#ifdef __cplusplus
+}
+#endif
 #endif // ifndef _MTCP_UTIL_H
